@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section>
+    <h2 id="submit-transfer-title">New Transfer</h2>
+    <form>
+      <div>
+        <label>1.Index:</label>
+        <input id="input-token-index" name="token-index" type="text">
+      </div>
+      <div>
+        <label>2.Token:</label>
+        <select id="input-token-type" name="token-type">
+          <option value="TON">TON</option>
+          <option value="USDT">USDT</option>
+          <option value="USDC">USDC</option>
+        </select>
+      </div>
+      <div>
+        <label>3.Amount:</label>
+        <input id="input-token-amount" name="token-amount" type="text">
+      </div>
+      <div>
+        <label>4.Recipient:</label>
+        <input id="input-token-recipient" name="token-recipient" type="text">
+      </div>
+    </form>
+    <div>
+      <button onclick="kevin.submit_send_tx()">
+        Submit Transaction
+      </button>
+    </div>
+</section>
+
+{% endblock %}

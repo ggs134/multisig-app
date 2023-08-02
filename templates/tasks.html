@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section onload="kevin.on_load_check_login()">
+    <h2 id="pending-title">To approve / unapprove</h2>
+    <div id="btn-login">
+        <button onclick="kevin.load_pending_txs()">Load TXs</button>
+        <table id="pending-txs">
+          <tr>
+            <th>Index</th>
+            <th>Recipient</th>
+            <th>Currency</th>
+            <th>Amount</th>
+            <th>Confirmations</th>
+            <th>Confirm by</th>
+            <th>Executed</th>
+            <th>Action</th>
+          </tr>
+        </table>
+    </div>
+</section>
+
+<section>
+    <h2 id="execute-title">To execute</h2>
+    <button onclick="kevin.load_execute_txs()">Load TXs</button>
+    <table id="execute-txs">
+        <tr>
+          <th>Index</th>
+          <th>Recipient</th>
+          <th>Currency</th>
+          <th>Amount</th>
+          <th>Confirmations</th>
+          <th>Confirm by</th>
+          <th>Executed</th>
+          <th>Action</th>
+        </tr>
+      </table>
+</section>
+
+{% endblock %}

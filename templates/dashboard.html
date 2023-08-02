@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section>
+    <h2 id="dashboard-balance-title">Multisig Balance</h2>
+    <div id="btn-load-balances">
+        <button onclick="kevin.set_all_balance()">Load Balance</button>
+        <ul id="token-balances"></ul>
+    </div>
+</section>
+
+<section>
+    <h2 id="dashboard-history-title">Transaction History</h2>
+    <button onclick="kevin.load_submitted_txs()">Load History</button>
+    <table id="submitted-txs">
+        <tr>
+          <th>Index</th>
+          <th>Recipient</th>
+          <th>Currency</th>
+          <th>Amount</th>
+          <th>Confirmations</th>
+          <th>Confirm by</th>
+          <th>Executed</th>
+        </tr>
+      </table>
+</section>
+
+{% endblock %}

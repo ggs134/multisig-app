@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section>
+    <h2 id="setting-master-owners">Info Master & Owners</h2>
+    <div id="list-owners-master">
+        <div id="master-div">
+          <h3>Master</h3>
+          <button id="btn-load-master" onclick="kevin.load_master()">Load Master</button>
+        </div>
+        <div id="owners-div">
+          <h3>Owners</h3>
+          <button id="btn-load-owners" onclick="kevin.load_owners_list()">Load Owners</button>
+        </div>
+    </div>
+</section>
+
+<section>
+    <h2 id="dashboard-history-title">Change Owners & Master</h2>
+    <div id="change-owners-div">
+      <h3>Owners</h3>
+
+      <form>
+        <div>
+          <label>1.Slot:</label>
+          <select id="input-owners-slot" name="owners-slot">
+            <option value="0">#1</option>
+            <option value="1">#2</option>
+            <option value="2">#3</option>
+          </select>
+        </div>
+        <div>
+          <label>2.New Owner:</label>
+          <input id="input-new-owner" name="new-owner" type="text">
+        </div>
+      </form>
+      <div>
+        <button onclick="kevin.send_change_owner()">
+          Change Owner
+        </button>
+      </div>
+
+    </div>
+
+    <div id="change-master-div">
+      <h3>Master</h3>
+
+      <form>
+        <div>
+          <label>New Master:</label>
+            <input id="input-new-master" name="new-master" type="text">
+        </div>
+      </form>
+
+      <div>
+        <button onclick="kevin.send_change_master()">
+          Change Master
+        </button>
+      </div>
+
+    </div>
+</section>
+
+{% endblock %}
