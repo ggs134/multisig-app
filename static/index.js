@@ -292,9 +292,26 @@ export async function set_all_balance(){
   // const usdt_div = document.getElementById("usdt-balance");
   // const usdc_div = document.getElementById("usdc-balance");
 
+  let buttons = document.getElementsByTagName("button");
+
+
+  //Loading hook in
+  let original_texts = [];
+  for(let k=0; k<buttons.length; k++){
+    original_texts.push(buttons[k].innerHTML);
+    buttons[k].innerHTML = "Loading..";
+    buttons[k].setAttribute("disabled","");
+  }
+
   let ton_bal = await get_TON_balance();
   let usdt_bal = await get_USDT_balance();
   let usdc_bal = await get_USDC_balance();
+
+  //Loading hook out
+  for(let k=0; k<buttons.length; k++){
+    buttons[k].innerHTML = original_texts[k];
+    buttons[k].removeAttribute("disabled");
+  }
 
   let ton_li = document.createElement('li');
   let usdt_li = document.createElement('li');
@@ -489,6 +506,16 @@ async function clear_submitted_txs(){
 
 export async function load_submitted_txs(){
   await clear_submitted_txs();
+  
+  //Loading hook in
+  let buttons = document.getElementsByTagName("button");
+  let original_texts = [];
+  for(let k=0; k<buttons.length; k++){
+    original_texts.push(buttons[k].innerHTML);
+    buttons[k].innerHTML = "Loading..";
+    buttons[k].setAttribute("disabled","");
+  }
+
   let txs = await get_list_submitted_txs();
 
   //table section
@@ -566,6 +593,11 @@ export async function load_submitted_txs(){
 
     //append table
     table.appendChild(row);
+  }
+  //Loading hook out
+  for(let k=0; k<buttons.length; k++){
+    buttons[k].innerHTML = original_texts[k];
+    buttons[k].removeAttribute("disabled");
   }
 
 }
@@ -793,7 +825,17 @@ async function clear_pending_txs(){
 }
 
 export async function load_pending_txs() {
-  //TODO : check login
+
+  //Loading hook in
+  let load_btn = document.getElementById("btn-load-approve");
+  let btn_origin_text = load_btn.innerHTML;
+  load_btn.innerHTML = "Loading..";
+  load_btn.setAttribute("disabled","");
+
+  let execute_load_btn = document.getElementById("btn-load-execute");
+  execute_load_btn.innerHTML = "Loading..";
+  execute_load_btn.setAttribute("disabled","");
+
   clear_pending_txs();
 
   //Ethereum mainnet provider
@@ -906,7 +948,12 @@ export async function load_pending_txs() {
     //append table
     table.appendChild(row);
   }
+  //Loading hook out
+  load_btn.innerHTML = btn_origin_text;
+  execute_load_btn.innerHTML = btn_origin_text;
 
+  load_btn.removeAttribute("disabled");
+  execute_load_btn.removeAttribute("disabled");
 }
 
 async function clear_execute_txs(){
@@ -949,7 +996,17 @@ async function clear_execute_txs(){
 }
 
 export async function load_execute_txs() {
-  //TODO : check login
+
+  //Loading hook in
+  let load_btn = document.getElementById("btn-load-approve");
+  let btn_origin_text = load_btn.innerHTML;
+  load_btn.innerHTML = "Loading..";
+  load_btn.setAttribute("disabled","");
+
+  let execute_load_btn = document.getElementById("btn-load-execute");
+  execute_load_btn.innerHTML = "Loading..";
+  execute_load_btn.setAttribute("disabled",""); 
+
   clear_execute_txs();
 
   //Ethereum mainnet provider
@@ -1053,6 +1110,13 @@ export async function load_execute_txs() {
     //append table
     table.appendChild(row);
   }
+
+  //Loading hook out
+  load_btn.innerHTML = btn_origin_text;
+  execute_load_btn.innerHTML = btn_origin_text;
+
+  load_btn.removeAttribute("disabled");
+  execute_load_btn.removeAttribute("disabled");
 
 }
 
