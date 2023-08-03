@@ -1,7 +1,5 @@
 #node
 node_modules
-static/main.js
-static/main.js.LICENSE.txt
 
 #python
 .venv
