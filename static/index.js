@@ -757,6 +757,11 @@ export async function change_owner(_slot, _newOwner) {
   const customProvider = new ethers.providers.JsonRpcProvider(NETWOROK_URL);
   const multisig = new ethers.Contract(MULTISIG_ADDRESS, multisig_abi, customProvider);
   
+  if(await multisig.isMaster(addrs) != true){
+    alert("You are not a Master");
+    return;
+  }
+
   const change_owner_tx = await multisig.connect(signer).changeOwner(_slot, _newOwner);
   return change_owner_tx;
 }
@@ -773,6 +778,11 @@ export async function change_master(_newMaster) {
   const customProvider = new ethers.providers.JsonRpcProvider(NETWOROK_URL);
   const multisig = new ethers.Contract(MULTISIG_ADDRESS, multisig_abi, customProvider);
   
+  if(await multisig.isMaster(addrs) != true){
+    alert("You are not a Master");
+    return;
+  }
+
   const change_master_tx = await multisig.connect(signer).changeMaster(_newMaster);
   return change_master_tx;
 }
@@ -1239,7 +1249,7 @@ export async function send_change_master(){
 
   let confirm_message = `
   Are you sure to change master?
-  New Owner : ${new_master}
+  New Master : ${new_master}
   `;
 
   if(confirm(confirm_message)){
