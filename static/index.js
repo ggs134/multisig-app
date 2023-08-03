@@ -2,19 +2,30 @@ const ethers = require("ethers")
 const multisig_abi = require('./multisig.json')["abi"];
 const token_abi = require('./testToken.json')["abi"];
 
-export const TON_ADDRESS = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
-export const USDT_ADDRESS = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
-export const USDC_ADDRESS = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
-export const MULTISIG_ADDRESS = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
+const TON_ADDRESS = "0x2Ec3676242868f43003E612b4B5d836CA568BA5b";
+const USDT_ADDRESS = "0xAa5Ea5A3BDd95fbD64A7F48a6086aC53039c4e9a";
+const USDC_ADDRESS = "0x855f019f6F7c558EB4FC6AD2e220B4bE36667535";
+const MULTISIG_ADDRESS = "0xd04f0D66EBCAFDD19ac8D784fa970F952e6Ae46D";
 
-const NETWOROK_URL = "http://127.0.0.1:8545/";
-const NETWORK_ID = "31337";
+const NETWOROK_URL = "https://goerli.optimism.tokamak.network";
+const NETWORK_ID = "5050";
 
 document.addEventListener(
   'DOMContentLoaded', 
   check_connection_change_interface(), 
   false
 );
+
+async function check_network(){
+  let provider = new ethers.providers.Web3Provider(window.ethereum);
+  let network = await provider.getNetwork();
+  let chainId = await network.chainId;
+  if(await chainId != NETWORK_ID){
+    return false;
+  } else {
+    return true;
+  }
+}
 
 async function address_shortner(_address){
   let last4 = _address.slice(-4);
@@ -34,6 +45,7 @@ async function isConnected() {
 }
 
 export async function check_connection_change_interface(){
+  
   //check connection and change interface
   
   //1.connected 
@@ -61,6 +73,12 @@ export async function check_connection_change_interface(){
   //checking metamask unlocked
   let is_connected = await isConnected();
   if(is_connected){
+
+    //check network when connected
+    if(await check_network() != true){
+      alert("check your network");
+      return;
+    }
 
     const account = document.getElementById("account");
 
@@ -186,7 +204,12 @@ function token_to_address(_token){
 }
 
 export async function login() {
-  //TODO : check network
+  
+  //check network
+  if(await check_network() != true){
+    alert("check your network");
+    return;
+  }
 
   //Ethereum mainnet provider
   const provider = new ethers.providers.Web3Provider(window.ethereum);
