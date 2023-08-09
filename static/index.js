@@ -1,14 +1,34 @@
 const ethers = require("ethers")
 const multisig_abi = require('./multisig.json')["abi"];
 const token_abi = require('./testToken.json')["abi"];
+const env_args = require('./env.js');
 
-const TON_ADDRESS = "0x2Ec3676242868f43003E612b4B5d836CA568BA5b";
-const USDT_ADDRESS = "0xAa5Ea5A3BDd95fbD64A7F48a6086aC53039c4e9a";
-const USDC_ADDRESS = "0x855f019f6F7c558EB4FC6AD2e220B4bE36667535";
-const MULTISIG_ADDRESS = "0xd04f0D66EBCAFDD19ac8D784fa970F952e6Ae46D";
+// const TON_ADDRESS = "0x2Ec3676242868f43003E612b4B5d836CA568BA5b";
+// const USDT_ADDRESS = "0xAa5Ea5A3BDd95fbD64A7F48a6086aC53039c4e9a";
+// const USDC_ADDRESS = "0x855f019f6F7c558EB4FC6AD2e220B4bE36667535";
+// const MULTISIG_ADDRESS = "0xd04f0D66EBCAFDD19ac8D784fa970F952e6Ae46D";
 
-const NETWOROK_URL = "https://goerli.optimism.tokamak.network";
-const NETWORK_ID = "5050";
+// const NETWOROK_URL = "https://goerli.optimism.tokamak.network";
+// const NETWORK_ID = "5050";
+
+// //FOR TEST
+// const TON_ADDRESS = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
+// const USDT_ADDRESS = "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0";
+// const USDC_ADDRESS = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
+// const MULTISIG_ADDRESS = "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9";
+
+// const NETWOROK_URL = "http://127.0.0.1:8545/";
+// const NETWORK_ID = "31337";
+
+//FOR TEST
+const TON_ADDRESS = env_args["TON_ADDRESS"];
+const USDT_ADDRESS = env_args["USDT_ADDRESS"];
+const USDC_ADDRESS = env_args["USDC_ADDRESS"];
+
+const MULTISIG_ADDRESS = env_args["MULTISIG_ADDRESS"];
+
+const NETWOROK_URL = env_args["NETWOROK_URL"];
+const NETWORK_ID = env_args["NETWORK_ID"];
 
 document.addEventListener(
   'DOMContentLoaded', 
