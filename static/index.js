@@ -807,6 +807,27 @@ export async function change_master(_newMaster) {
   return change_master_tx;
 }
 
+export async function change_confirmations(_newConfirms) {
+  //Ethereum mainnet provider
+  const provider = new ethers.providers.Web3Provider(window.ethereum);
+  await provider.send("eth_requestAccounts", []);
+  
+  //signer : current connected account
+  const signer = await provider.getSigner();
+  const addrs = await signer.getAddress();
+
+  const customProvider = new ethers.providers.JsonRpcProvider(NETWOROK_URL);
+  const multisig = new ethers.Contract(MULTISIG_ADDRESS, multisig_abi, customProvider);
+  
+  if(await multisig.isMaster(addrs) != true){
+    alert("You are not a Master");
+    return;
+  }
+
+  const change_confirms_tx = await multisig.connect(signer).changeNumConfirmationsRequired(_newConfirms);
+  return change_confirms_tx;
+}
+
 // export async function test(){
 //   const to = "0x70997970C51812dc3A010C7d01b50e0d17dc79C8";
 //   const amount = ethers.utils.parseEther("0.11");
@@ -1274,6 +1295,46 @@ export async function send_change_master(){
 
   if(confirm(confirm_message)){
     let change_master_tx = await change_master(new_master);
+  }else{
+    return;
+  }
+}
+
+export async function load_num_confirmations(){
+  const customProvider = new ethers.providers.JsonRpcProvider(NETWOROK_URL);
+  // const token = new ethers.Contract(_token, token_abi, customProvider);
+  // let _balance = await token.balanceOf(_target);
+  const multisig = new ethers.Contract(MULTISIG_ADDRESS, multisig_abi, customProvider);
+  let num_confirmations = await multisig.numConfirmationsRequired.call()
+  // console.log(master);
+
+  let change_conf_div = document.getElementById("change-confirmations-div");
+  let load_conf_btn = document.getElementById("btn-load-confirmatoins");
+  let loaded_conf_div = document.createElement("div");
+  loaded_conf_div.setAttribute("id", "num-of-confirmations");
+  loaded_conf_div.innerHTML = num_confirmations;
+  
+  // console.log(master_addrs_div);
+  change_conf_div.replaceChild(loaded_conf_div, load_conf_btn);
+}
+
+export async function send_change_confirmations(){
+  let new_confirmations = await document.getElementById('input-new-confirmations').value;
+
+  let num_new_confirms = Number(new_confirmations);
+
+  if(num_new_confirms<1 && num_new_confirms>3){
+    alert("Confirmations must be between 1-3");
+    return;
+  }
+
+  let confirm_message = `
+  Are you sure to change num required approvals?
+  New Approvals : ${num_new_confirms}
+  `;
+
+  if(confirm(confirm_message)){
+    let change_confirms_tx = await change_confirmations(num_new_confirms);
   }else{
     return;
   }

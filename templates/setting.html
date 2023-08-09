@@ -2,7 +2,7 @@
 
 {% block content %}
 <section>
-    <h2 id="setting-master-owners">Info Master & Owners</h2>
+    <h2 id="setting-master-owners">1.Info Master & Owners</h2>
     <div id="list-owners-master">
         <div id="master-div">
           <h3>Master</h3>
@@ -16,7 +16,7 @@
 </section>
 
 <section>
-    <h2 id="dashboard-history-title">Change Owners & Master</h2>
+    <h2 id="dashboard-history-title">2.Change Owners & Master</h2>
     <div id="change-owners-div">
       <h3>Owners</h3>
 
@@ -59,6 +59,30 @@
       </div>
 
     </div>
+</section>
+
+<section>
+  <h2 id="change-confirmation-title">3.Change # of approvals required</h2>
+  <div id="change-confirmations-div">
+    <button id="btn-load-confirmatoins" onclick="kevin.load_num_confirmations()">Get current # approvals</button>
+    <h3>Approvals</h3>
+    <form>
+      <div>
+        <label>New Approvals</label>
+        <!-- <input id="input-new-confirmations" name="new-confirms" type="number"> -->
+        <select id="input-new-confirmations" name="new-confirms">
+          <option value="3">3 approval</option>
+          <option value="2">2 approval</option>
+          <option value="1">1 approval</option>
+        </select>
+      </div>
+    </form>
+    <div>
+      <button onclick="kevin.send_change_confirmations()">
+        Change Approvals
+      </button>
+    </div>
+  </div>
 </section>
 
 {% endblock %}
