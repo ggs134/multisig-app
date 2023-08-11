@@ -1,7 +1,10 @@
 const ethers = require("ethers")
 const multisig_abi = require('./multisig.json')["abi"];
-const token_abi = require('./testToken.json')["abi"];
+// const token_abi = require('./testToken.json')["abi"];
 const env_args = require('./env.js');
+
+const titan_ton_abi = require('./titanTON.json');
+const titan_USD_abi = require('./titanTON.json');
 
 //environment variables
 const TON_ADDRESS = env_args["TON_ADDRESS"];
@@ -309,6 +312,7 @@ export async function set_all_balance(){
   let ton_bal = await get_TON_balance();
   let usdt_bal = await get_USDT_balance();
   let usdc_bal = await get_USDC_balance();
+  // console.log(ton_bal);
 
   //Loading hook out
   for(let k=0; k<buttons.length; k++){
@@ -320,9 +324,19 @@ export async function set_all_balance(){
   let usdt_li = document.createElement('li');
   let usdc_li = document.createElement('li');
 
-  ton_li.innerHTML = "TON : " + ton_bal;
-  usdt_li.innerHTML = "USDT : " + usdt_bal;
-  usdc_li.innerHTML = "USDC : " + usdc_bal;
+  let ton_bal_fixed = Number(ton_bal).toFixed(1);
+  let usdt_bal_fixed = Number(usdt_bal).toFixed(1);
+  let usdc_bal_fixed = Number(usdc_bal).toFixed(1);
+
+  let ton_bal_comma = ethers.utils.commify(ton_bal_fixed);
+  let usdt_bal_comma = ethers.utils.commify(usdt_bal_fixed);
+  let usdc_bal_comma = ethers.utils.commify(usdc_bal_fixed);
+  // console.log(ethers.utils.commify(ton_bal_fixed));
+  // console.log(ethers.utils.commify(Number(ton_bal)));
+
+  ton_li.innerHTML = "TON : " + ton_bal_comma;
+  usdt_li.innerHTML = "USDT : " + usdt_bal_comma;
+  usdc_li.innerHTML = "USDC : " + usdc_bal_comma;
 
   balance_ul.appendChild(ton_li);
   balance_ul.appendChild(usdt_li);
@@ -349,68 +363,33 @@ export async function get_USDC_balance(){
 
 export async function get_balance_target(_token, _target) {
   const customProvider = new ethers.providers.JsonRpcProvider(NETWOROK_URL);
-  const token = new ethers.Contract(_token, token_abi, customProvider);
-  let _balance = await token.balanceOf(_target);
-  return ethers.utils.formatEther(_balance);
+  if(_token == TON_ADDRESS){
+    const ton = new ethers.Contract(_token, titan_ton_abi, customProvider);
+    let _balance = await ton.balanceOf(_target);
+    return ethers.utils.formatEther(_balance);
+  } else {
+    const usd = new ethers.Contract(_token, titan_USD_abi, customProvider);
+    let _balance = await usd.balanceOf(_target);
+    return ethers.utils.formatUnits(_balance, 6);
+  } 
 }
-
-export async function get_balance_multisig(_token) {
-
-  const customProvider = new ethers.providers.JsonRpcProvider(NETWOROK_URL);
-
-  // const signer = customProvider.getSigner();
-
-  // const address_multisig = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
-  // const address_token = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
-
-  const address_user1 = "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266";
-  const address_user2 = "0x70997970C51812dc3A010C7d01b50e0d17dc79C8";
-
-  // console.log(multisig_abi);
-
-  ///Getting ETH balance
-
-  // const balance = await customProvider.getBalance(address_user1);
-  // const balanceInEth = ethers.utils.formatEther(balance);
-
-  // console.log(balance);
-  // console.log(`ETH balance of ${address_user1} is ${balanceInEth}`);
-
-  //////
-  
-  // const addrs = await signer.getAddress();
-
-  const multisig = new ethers.Contract(MULTISIG_ADDRESS, multisig_abi, customProvider);
-  const token = new ethers.Contract(_token, token_abi, customProvider);
-  // console.log(multisig.address);
-  // console.log(test_token);
-
-  // const token_balance = await test_token.balanceOf(address_user1);
-  // const token_balance2 = await test_token.balanceOf(address_user2);
-
-  let multisig_balance = await token.balanceOf(MULTISIG_ADDRESS);
-
-  // console.log(await test_token.balanceOf(address_multisig));
-  // console.log(ethers.utils.formatEther(token_balance));
-  // console.log(ethers.utils.formatEther(token_balance2));
-
-  // console.log(await test_token.balanceOf(multisig.address));
-  return ethers.utils.formatEther(multisig_balance);
-}
-
-//TODO : Get Transaction history
 
 export async function get_num_submitted_txs() {
+  // console.log("get_num_submitted_txs() in");
   const customProvider = new ethers.providers.JsonRpcProvider(NETWOROK_URL);
   const multisig = new ethers.Contract(MULTISIG_ADDRESS, multisig_abi, customProvider);
-  const count = await multisig.getTransactionCount() 
+  // console.log(multisig);
+
+  const count = await multisig.getTransactionCount();
+  
+  // console.log(count);
+
   return count.toNumber();
 }
 
 export async function get_list_submitted_txs() {
   const customProvider = new ethers.providers.JsonRpcProvider(NETWOROK_URL);
   const multisig = new ethers.Contract(MULTISIG_ADDRESS, multisig_abi, customProvider);
-
   let length = await get_num_submitted_txs();
 
   let res = {};
@@ -466,12 +445,27 @@ async function who_confirm_tx(_index){
   return owners_confirmed;
 }
 
-async function decode_submitted_data(_txData) {
+// async function decode_submitted_data(_txData) {
+//   const customProvider = new ethers.providers.JsonRpcProvider(NETWOROK_URL);
+//   const token = new ethers.Contract(TON_ADDRESS, titan_ton_abi, customProvider);
+//   let decoded = await token.interface.decodeFunctionData("transfer", _txData)
+//   //[recipient, amount(wei)]
+//   return decoded;
+// }
+
+async function decode_transfer_ton_data(_txData) {
   const customProvider = new ethers.providers.JsonRpcProvider(NETWOROK_URL);
-  const token = new ethers.Contract(TON_ADDRESS, token_abi, customProvider);
+  const token = new ethers.Contract(TON_ADDRESS, titan_ton_abi, customProvider);
   let decoded = await token.interface.decodeFunctionData("transfer", _txData)
   //[recipient, amount(wei)]
-  // console.log(decoded);
+  return decoded;
+}
+
+async function decode_transfer_usd_data(_txData) {
+  const customProvider = new ethers.providers.JsonRpcProvider(NETWOROK_URL);
+  const token = new ethers.Contract(USDT_ADDRESS, titan_USD_abi, customProvider);
+  let decoded = await token.interface.decodeFunctionData("transfer", _txData)
+  //[recipient, amount(wei)]
   return decoded;
 }
 
@@ -553,14 +547,29 @@ export async function load_submitted_txs(){
 
     //get each row data
 
-    let decoded = await decode_submitted_data(txs[i].data);
+    let currency = await address_to_token(txs[i].to);
+    let decoded;
+    let amount;
+
+    // console.log(currency);
+
+    if(currency == "TON"){
+      decoded = await decode_transfer_ton_data(txs[i].data);
+      // console.log(decoded, "TON");
+      amount = ethers.utils.formatEther(decoded.amount);
+    }else{
+      decoded = await decode_transfer_usd_data(txs[i].data);
+      amount = ethers.utils.formatUnits(decoded.amount, 6);
+    }
+    
+    // console.log(decoded, "if out");
+    // console.log(decoded.to, "decoded.to");
+    // console.log(decoded.recipient, "decoded.to");
 
     let index = i
-    let recipient = decoded.to
-    // let recipient_trimed = recipient.slice(0, -35)+"..."
+    let recipient = decoded.recipient;
     let recipient_trimed = await address_shortner(recipient);
-    let amount = ethers.utils.formatEther(decoded.amount);
-    let currency = address_to_token(txs[i].to);
+    // let amount = ethers.utils.formatEther(decoded.amount);
     let confirmations = txs[i].numConfirmations.toNumber();
 
     let confirm_by = await who_confirm_tx(i);
@@ -627,7 +636,13 @@ export async function submit_transaction(_to, _amount, _token){
 
     const customProvider = new ethers.providers.JsonRpcProvider(NETWOROK_URL);
     const multisig = new ethers.Contract(MULTISIG_ADDRESS, multisig_abi, customProvider);
-    const token = new ethers.Contract(_token, token_abi, customProvider);
+    let token;
+    if(_token == TON_ADDRESS){
+      token = new ethers.Contract(_token, titan_ton_abi, customProvider);
+    } else {
+      token = new ethers.Contract(_token, titan_USD_abi, customProvider);
+    }
+    // const token = new ethers.Contract(_token, token_abi, customProvider);
 
     const tx_data = await token.interface.encodeFunctionData("transfer",[_to, _amount]);
 
@@ -724,16 +739,24 @@ export async function execute_transaction(_index) {
   // console.log(tx_obj.data); // to whome, amount
   // console.log(tx_obj.to) // token type
 
-  let tx_decoded = await decode_submitted_data(tx_obj.data);
-  // console.log(tx_decoded);
-
   let token_type = address_to_token(tx_obj.to);
   // console.log(token_type);
+
+  let tx_decoded;
+
+  if(token_type == "TON"){
+    tx_decoded = await decode_transfer_ton_data(tx_obj.data);
+  }else{
+    tx_decoded = await decode_transfer_usd_data(tx_obj.data);
+  }
+
+  // let tx_decoded = await decode_submitted_data(tx_obj.data);
+  // // console.log(tx_decoded);
 
   let token_amount = ethers.utils.formatEther(tx_decoded.amount);
   // console.log(token_amount);
 
-  let token_recipient = tx_decoded.to;
+  let token_recipient = tx_decoded.recipient;
   // console.log(token_recipient);
 
   let confirm_message = `Are you sure to Execute Tx?
@@ -919,14 +942,25 @@ export async function load_pending_txs() {
 
     //get each row data
 
-    let decoded = await decode_submitted_data(txs[i].data);
+    let currency = address_to_token(txs[i].to);
+    let decoded;
+    let amount;
+    if(currency == "TON"){
+      decoded = await decode_transfer_ton_data(txs[i].data);
+      amount = ethers.utils.formatEther(decoded.amount);
+    }else{
+      decoded = await decode_transfer_usd_data(txs[i].data);
+      amount = ethers.utils.formatUnits(decoded.amount, 6);
+    }
+
+    // let decoded = await decode_submitted_data(txs[i].data);
 
     let index = i
-    let recipient = decoded.to
+    let recipient = decoded.recipient;
     // let recipient_trimed = recipient.slice(0, -35)+"..."
     let recipient_trimed = await address_shortner(recipient);
-    let amount = ethers.utils.formatEther(decoded.amount);
-    let currency = address_to_token(txs[i].to);
+    // let amount = ethers.utils.formatEther(decoded.amount);
+    
 
     let confirm_by = await who_confirm_tx(i);
     let confirm_by_trimed = [];
@@ -1094,15 +1128,26 @@ export async function load_execute_txs() {
     let action_td = document.createElement('td');
 
     //get each row data
+    let currency = address_to_token(txs[i].to);
+    let decoded;
+    let amount;
+    if(currency == "TON"){
+      decoded = await decode_transfer_ton_data(txs[i].data);
+      amount = ethers.utils.formatEther(decoded.amount);
+    }else{
+      decoded = await decode_transfer_usd_data(txs[i].data);
+      amount = ethers.utils.formatUnits(decoded.amount, 6);
+    }
 
-    let decoded = await decode_submitted_data(txs[i].data);
+
+    // let decoded = await decode_submitted_data(txs[i].data);
 
     let index = i;
-    let recipient = decoded.to;
+    let recipient = decoded.recipient;
     // let recipient_trimed = recipient.slice(0, -35)+"...";
     let recipient_trimed = await address_shortner(recipient);
-    let amount = ethers.utils.formatEther(decoded.amount);
-    let currency = address_to_token(txs[i].to);
+    // let amount = ethers.utils.formatEther(decoded.amount);
+    
 
     let confirm_by = await who_confirm_tx(i);
     let confirm_by_trimed = [];
@@ -1183,7 +1228,15 @@ export async function submit_send_tx(){
 
   //convert amount to wei(string)
   let amount_wei = ethers.utils.parseEther(amount).toString();
+  let amount_unit6 = ethers.utils.parseUnits(amount, 6).toString();
   // console.log(amount_wei);
+  let amount_tx;
+  if(type == "TON"){
+    amount_tx = amount_wei;
+  } else {
+    amount_tx = amount_unit6;
+  }
+
 
   //check recipient address validity if yes -> alert and break
   let is_address = ethers.utils.isAddress(recipient);
@@ -1202,7 +1255,7 @@ export async function submit_send_tx(){
   //confirm check index, type, amount, recipient again, click confirm
   if(confirm(confirm_message) == true){
     //submit transaction
-    await submit_transaction(recipient, amount_wei, token_address);
+    await submit_transaction(recipient, amount_tx, token_address);
   }
 }
 
@@ -1212,7 +1265,6 @@ export async function submit_send_tx(){
 
 export async function load_master(){
   const customProvider = new ethers.providers.JsonRpcProvider(NETWOROK_URL);
-  // const token = new ethers.Contract(_token, token_abi, customProvider);
   // let _balance = await token.balanceOf(_target);
   const multisig = new ethers.Contract(MULTISIG_ADDRESS, multisig_abi, customProvider);
   let master = await multisig.master.call()
@@ -1294,7 +1346,6 @@ export async function send_change_master(){
 
 export async function load_num_confirmations(){
   const customProvider = new ethers.providers.JsonRpcProvider(NETWOROK_URL);
-  // const token = new ethers.Contract(_token, token_abi, customProvider);
   // let _balance = await token.balanceOf(_target);
   const multisig = new ethers.Contract(MULTISIG_ADDRESS, multisig_abi, customProvider);
   let num_confirmations = await multisig.numConfirmationsRequired.call()
