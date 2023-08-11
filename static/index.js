@@ -667,7 +667,8 @@ export async function confirm_transaction(_index) {
   const multisig = new ethers.Contract(MULTISIG_ADDRESS, multisig_abi, customProvider);
 
   let confirm_message=`
-  ${_index} is confirmed, are you sure?
+  ${_index} is approved by you. 
+  Are you sure?
   `;
   
   let is_confirmed = confirm(confirm_message);
