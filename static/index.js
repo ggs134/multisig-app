@@ -743,17 +743,20 @@ export async function execute_transaction(_index) {
   // console.log(token_type);
 
   let tx_decoded;
+  let token_amount;
 
   if(token_type == "TON"){
     tx_decoded = await decode_transfer_ton_data(tx_obj.data);
+    token_amount = ethers.utils.formatEther(tx_decoded.amount);
   }else{
     tx_decoded = await decode_transfer_usd_data(tx_obj.data);
+    token_amount = ethers.utils.formatUnits(tx_decoded.amount, 6);
   }
 
   // let tx_decoded = await decode_submitted_data(tx_obj.data);
   // // console.log(tx_decoded);
 
-  let token_amount = ethers.utils.formatEther(tx_decoded.amount);
+  // let token_amount = ethers.utils.formatEther(tx_decoded.amount);
   // console.log(token_amount);
 
   let token_recipient = tx_decoded.recipient;
