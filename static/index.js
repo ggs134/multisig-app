@@ -486,8 +486,8 @@ async function clear_submitted_txs(){
   recipient_th.innerHTML = "Recipient";
   currency_th.innerHTML = "Currency";
   amount_th.innerHTML = "Amount";
-  confirmations_th.innerHTML = "Confirmations";
-  confirm_by_th.innerHTML = "Confirm by";
+  confirmations_th.innerHTML = "#Approvals";
+  confirm_by_th.innerHTML = "Approved by";
   executed_th.innerHTML = "Executed";
 
   //build row
@@ -872,8 +872,8 @@ async function clear_pending_txs(){
   recipient_th.innerHTML = "Recipient";
   currency_th.innerHTML = "Currency";
   amount_th.innerHTML = "Amount";
-  confirmations_th.innerHTML = "Confirmations";
-  confirm_by_th.innerHTML = "Confirm by";
+  confirmations_th.innerHTML = "#Approvals";
+  confirm_by_th.innerHTML = "Approved by";
   executed_th.innerHTML = "Executed";
   action_th.innerHTML = "Action";
 
@@ -1054,8 +1054,8 @@ async function clear_execute_txs(){
   recipient_th.innerHTML = "Recipient";
   currency_th.innerHTML = "Currency";
   amount_th.innerHTML = "Amount";
-  confirmations_th.innerHTML = "Confirmations";
-  confirm_by_th.innerHTML = "Confirm by";
+  confirmations_th.innerHTML = "#Approvals";
+  confirm_by_th.innerHTML = "Approved by";
   executed_th.innerHTML = "Executed";
   action_th.innerHTML = "Action";
 
